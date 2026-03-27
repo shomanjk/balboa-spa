@@ -21,6 +21,8 @@ and this project generally follows [Semantic Versioning](https://semver.org/).
 - Reduced noisy retry impact when spa data is unavailable by increasing panel-data poll retry from 1s to 10s for the specific `no_spa_data_yet` condition.
 - Improved client handling of API not-ready responses:
   - Treats `<error>no_spa_data_yet</error>` as a known non-fatal state instead of generic hard error logging.
+- Fork policy cleanup: `dist/` is no longer tracked as source-of-truth content and is ignored as generated build output.
+- Simplified fork README policy guidance by removing the extra "deploy-ready" terminology section.
 
 ### Notes
 - During this work, generated build artifacts in `dist/` changed as expected after rebuilding with Vite/PWA.

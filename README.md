@@ -50,9 +50,3 @@ For this fork, treat `src/` as the source of truth.
 2. Build assets:
    - `npm run build`
 3. Deploy filesystem assets from `dist/` via your firmware host workflow (for example PlatformIO `uploadfs` in the parent ESP32 project).
-
-### What "deploy-ready" means
-
-"Deploy-ready" means the built static files already exist in `dist/` and can be served/uploaded directly without requiring a local Node/Vite build step first.
-
-In this project, deployment can still succeed without committing `dist/` as long as your deploy process runs the build before upload.
