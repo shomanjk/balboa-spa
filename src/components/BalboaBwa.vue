@@ -2,7 +2,7 @@
   <div class="loading" v-if="loading">
     <span class="spinner"></span>
   </div>
-  <div v-if="!panelData || !balboaUserData?.token">
+  <div v-if="!balboaUserData?.token">
     <form
       class="login-form"
       @submit.prevent="balboaLogin(auth.username, auth.password)"
@@ -25,11 +25,14 @@
       <button type="submit">Login</button>
     </form>
   </div>
-
-  <div class="main-container" v-else>
+  <div class="main-container" v-else :class="{ 'bench-mode': !hasLivePanelData }">
     <div class="top-menu">
       <div>User: {{ balboaUserData?.username }}</div>
       <div><button @click="logout()">LOGOUT</button></div>
+    </div>
+    <div v-if="!hasLivePanelData" class="bench-banner">
+      Connected to web API. RS485 spa data is not available yet, so controls are
+      shown in read-only mode.
     </div>
     <div class="time-modal" system-time-modal hidden>
       <div>
@@ -403,7 +406,38 @@ const editingValues = ref(false);
 const balboaUserData = ref(null);
 const setupParameters = ref(null);
 const systemInformation = ref(null);
-const panelData = ref(null);
+const hasLivePanelData = ref(false);
+const panelData = ref({
+  is24HourTime: true,
+  hours: 0,
+  minutes: 0,
+  isCelsius: false,
+  temperature: 0,
+  targetTemperature: 0,
+  heating: { state: false, status: "Off" },
+  holdMode: { state: false, duration: null },
+  range: { state: false, status: "Low Range" },
+  heatMode: "Ready",
+  filterMode: { state: { 1: false, 2: false }, status: "Off" },
+  pumpStates: {
+    1: { id: 1, present: false, state: false, status: "Off" },
+    2: { id: 2, present: false, state: false, status: "Off" },
+    3: { id: 3, present: false, state: false, status: "Off" },
+    4: { id: 4, present: false, state: false, status: "Off" },
+    5: { id: 5, present: false, state: false, status: "Off" },
+    6: { id: 6, present: false, state: false, status: "Off" },
+  },
+  lightStates: {
+    1: { id: 1, present: false, state: false, status: "Off" },
+    2: { id: 2, present: false, state: false, status: "Off" },
+  },
+  auxStates: {
+    1: { id: 1, present: false, state: false, status: "Off" },
+    2: { id: 2, present: false, state: false, status: "Off" },
+  },
+  blowerState: { present: false, state: false, status: "Off" },
+  circPump: { present: false, state: false, status: "Off" },
+});
 const filterCycles = ref(null);
 
 onBeforeMount(() => {
@@ -524,6 +558,7 @@ async function logout() {
   }
   localStorage.removeItem("balboaSession");
   balboaUserData.value = null;
+  hasLivePanelData.value = false;
 }
 
 // This function is used to get the panel data.
@@ -532,16 +567,24 @@ async function getPanelData() {
     clearTimeout(timeouts.getPanelData);
     const response = await balboa.getPanelData();
     if (!editingValues.value) {
+      hasLivePanelData.value = true;
       panelData.value = response;
       lastSync.value = new Date();
     }
     timeouts.getPanelData = setTimeout(getPanelData, 1000);
   } catch (error) {
-    console.error("Error getting panel data:", error);
+    const noSpaDataYet = (error?.message || "").includes("Spa data not ready yet");
+    if (!noSpaDataYet) {
+      console.error("Error getting panel data:", error);
+    }
     if (!balboa.balboaToken.value) {
       return logout();
     }
-    timeouts.getPanelData = setTimeout(getPanelData, 1000);
+    if (noSpaDataYet) {
+      hasLivePanelData.value = false;
+    }
+    // Back off polling while bench testing without RS485 data.
+    timeouts.getPanelData = setTimeout(getPanelData, noSpaDataYet ? 10000 : 1000);
   }
 }
 
@@ -914,6 +957,22 @@ function closeDialog(id) {
   /* Added to cover the whole screen */
   background-color: rgba(0, 0, 0, 0.5);
   /* Added to create a semi-transparent overlay */
+}
+
+.bench-banner {
+  margin: 0.75rem;
+  padding: 0.75rem;
+  border: 1px solid #d6b260;
+  border-radius: 0.5rem;
+  background: #fff7e6;
+  color: #5c450d;
+  font-size: 0.9rem;
+  user-select: text;
+}
+
+.main-container.bench-mode > :not(.top-menu):not(.bench-banner) {
+  opacity: 0.45;
+  pointer-events: none;
 }
 
 .spinner {

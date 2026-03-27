@@ -144,6 +144,9 @@ function extractValueFromXMLResponse(response, targetName) {
     //extract target error
     const error = xmlDoc.querySelector("error")?.textContent;
     if (error) {
+      if (error === "no_spa_data_yet") {
+        throw new Error("Spa data not ready yet");
+      }
       console.error(`Failed to extract ${targetName} from XML response: ${error}`);
       throw new Error(`Failed to extract ${targetName} from XML response: ${error}`);
     }
