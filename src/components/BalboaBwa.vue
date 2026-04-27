@@ -8,6 +8,10 @@
       @submit.prevent="balboaLogin(auth.username, auth.password)"
     >
       <h1>Balboa BWA</h1>
+      <p class="login-hint">
+        On this local gateway, username and password are not verified—enter any
+        value in each field to continue.
+      </p>
       <input
         type="text"
         v-model="auth.username"
@@ -1013,6 +1017,16 @@ button:active {
   justify-content: center;
   align-items: center;
   height: 100vh;
+
+  .login-hint {
+    max-width: 22rem;
+    margin: 0 1rem 1rem;
+    padding: 0 0.25rem;
+    text-align: center;
+    font-size: 0.9rem;
+    line-height: 1.35;
+    color: #555;
+  }
 
   input {
     margin-bottom: 1rem;
