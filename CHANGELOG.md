@@ -7,6 +7,10 @@ and this project generally follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+
+- README: primary install path is [shomanjk/esp32_balboa_spa](https://github.com/shomanjk/esp32_balboa_spa); Balboa Cloud workflow demoted to legacy section; removed link to NorthernMan54/esp32_balboa_panel.
+
 ### Added
 - Added a `CHANGELOG.md` to track SPA-specific changes in this fork.
 - Added bench-mode UI behavior after login:
@@ -25,5 +29,7 @@ and this project generally follows [Semantic Versioning](https://semver.org/).
 - Simplified fork README policy guidance by removing the extra "deploy-ready" terminology section.
 
 ### Notes
+
+- **GitHub repo metadata (manual):** Update repository **About** to e.g. “Balboa spa PWA UI — use with [esp32_balboa_spa](https://github.com/shomanjk/esp32_balboa_spa) for local RS485 control” and add topics `esp32`, `balboa`, `rs485`, `home-assistant` if desired.
 - During this work, generated build artifacts in `dist/` changed as expected after rebuilding with Vite/PWA.
 - Firmware-side companion changes were made in the parent `esp32_balboa_spa` repository to return explicit not-ready API responses and improve POST body handling for chunked requests.
