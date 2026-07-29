@@ -1,0 +1,51 @@
+# Prove the Vue/PWA package builds the same way firmware LittleFS pre-build does.
+# (Parent esp32_balboa_spa Build CI still owns PlatformIO firmware compiles.)
+
+name: Build
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: build-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  spa:
+    name: npm build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Configure local-hosting env
+        run: |
+          printf '%s\n' \
+            '# CI: match firmware scripts/extra_script.py Option A' \
+            'VITE_LOCAL_HOSTING=Enabled' \
+            > .env
+
+      - name: Build
+        run: npm run build
+
+      - name: Smoke-check dist
+        run: |
+          test -f dist/index.html
+          test -f dist/sw.js
+          # Gateway portal navigations must not be rewritten to index.html
+          grep -q '/status' dist/sw.js
+          grep -q '/config' dist/sw.js
+          grep -q '/state' dist/sw.js
+          grep -q '/logs' dist/sw.js
+          grep -q 'denylist' dist/sw.js
