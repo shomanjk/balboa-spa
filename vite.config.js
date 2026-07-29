@@ -26,6 +26,17 @@ export default defineConfig({
         skipWaiting: true,
         clientsClaim: true,
         cleanupOutdatedCaches: true,
+        // Let firmware portal pages and APIs hit the network instead of SPA index.html.
+        navigateFallbackDenylist: [
+          /^\/status/,
+          /^\/config/,
+          /^\/state/,
+          /^\/logs/,
+          /^\/api/,
+          /^\/devices/,
+          /^\/users/,
+          /^\/restart/,
+        ],
       }
     })
   ],
