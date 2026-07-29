@@ -7,6 +7,11 @@ and this project generally follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- **Gateway portal menu** on login and the main top bar: compact **Gateway** disclosure with links to firmware **Spa Status**, **Spa Config**, **ESP State**, and **Logs** (`/status`, `/config`, `/state`, `/logs`).
+- PWA service worker **`navigateFallbackDenylist`** so those portal routes (and `/api`, `/devices`, `/users`, `/restart`) are not rewritten to `index.html`.
+
 ### Changed
 
 - README: primary install path is [shomanjk/esp32_balboa_spa](https://github.com/shomanjk/esp32_balboa_spa); Balboa Cloud workflow demoted to legacy section; removed link to NorthernMan54/esp32_balboa_panel.

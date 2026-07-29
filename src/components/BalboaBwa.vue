@@ -2,7 +2,16 @@
   <div class="loading" v-if="loading">
     <span class="spinner"></span>
   </div>
-  <div v-if="!balboaUserData?.token">
+  <div v-if="!balboaUserData?.token" class="login-screen">
+    <details class="gateway-menu gateway-menu--login">
+      <summary>Gateway</summary>
+      <nav aria-label="Gateway portal">
+        <a href="/status">Spa Status</a>
+        <a href="/config">Spa Config</a>
+        <a href="/state">ESP State</a>
+        <a href="/logs">Logs</a>
+      </nav>
+    </details>
     <form
       class="login-form"
       @submit.prevent="balboaLogin(auth.username, auth.password)"
@@ -32,7 +41,18 @@
   <div class="main-container" v-else :class="{ 'bench-mode': !hasLivePanelData }">
     <div class="top-menu">
       <div>User: {{ balboaUserData?.username }}</div>
-      <div><button @click="logout()">LOGOUT</button></div>
+      <div class="top-menu-actions">
+        <details class="gateway-menu">
+          <summary>Gateway</summary>
+          <nav aria-label="Gateway portal">
+            <a href="/status">Spa Status</a>
+            <a href="/config">Spa Config</a>
+            <a href="/state">ESP State</a>
+            <a href="/logs">Logs</a>
+          </nav>
+        </details>
+        <button @click="logout()">LOGOUT</button>
+      </div>
     </div>
     <div v-if="!hasLivePanelData" class="bench-banner">
       Connected to web API. RS485 spa data is not available yet, so controls are
@@ -1045,6 +1065,77 @@ button:active {
   }
 }
 
+.login-screen {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.gateway-menu {
+  position: relative;
+  z-index: 20;
+
+  summary {
+    list-style: none;
+    cursor: pointer;
+    user-select: none;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+    background: var(--background-color);
+    color: var(--color);
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  summary::marker {
+    content: "";
+  }
+
+  nav {
+    position: absolute;
+    top: calc(100% + 0.35rem);
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    min-width: 10rem;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+    background: var(--background-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+  }
+
+  a {
+    display: block;
+    padding: 0.55rem 0.75rem;
+    border-radius: 0.4rem;
+    color: var(--color);
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-align: left;
+  }
+
+  a:hover,
+  a:focus-visible {
+    background: #40b1bf;
+    color: #fff;
+    outline: none;
+  }
+}
+
+.gateway-menu--login {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+}
+
 .top-menu {
   display: flex;
   justify-content: space-between;
@@ -1054,6 +1145,12 @@ button:active {
   margin-bottom: 0.5rem;
   // background-color: #f0f0f0;
   border-bottom: 1px solid #ccc;
+
+  .top-menu-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
 
   button {
     background-color: #d64d4d;
